@@ -5,6 +5,6 @@ Contenido del repositorio:
 * Archivo README
 * Licencia MIT
 
-Repositorio creado por Dr. Francisco Jahuey, FZYE, UACH.
+Repositorio creado por el Dr. Francisco Jahuey, FZYE, UACH
 
-Actualmente en mantenimiento
+En mantenimiento
