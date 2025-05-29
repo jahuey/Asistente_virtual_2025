@@ -12,7 +12,7 @@ prompt = st.chat_input("Escribe aquí")
 if prompt==None:
    st.stop()
 
-with st.chat_message("user", avatar: :streamlit: ):
+with st.chat_message("user", avatar: ":streamlit:" ):
    st.markdown(prompt)
 
 # Generate a response using the OpenAI API.
