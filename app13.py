@@ -3,7 +3,7 @@ import streamlit as st
 
 st.set_page_config(page_title="Ejemplo Chat", layout="wide")
 
-st.title(":smile: Mini Chatbot (solo repite lo que dices)")
+st.title("Mini Chatbot (solo repite lo que dices)")
 
 # Entrada tipo chat (abajo de la pantalla)
 user_input = st.chat_input(placeholder="Your message...")
