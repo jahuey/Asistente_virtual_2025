@@ -2,6 +2,17 @@ import streamlit as st
 
 st.title(":blue[Asistente virtual para el curso de Mejoramiento Animal] 🐎 🐂 🐷 🐐 🐑 🐔")
 
+nombre = st.text_input("¿Cuál es tu nombre?")
+if nombre:
+    st.write(f"Hola, {nombre} 👋, bienvenido al curso de Mejoramiento Animal")
+
+# Widget: slider
+numero = st.slider("Indica cuál es tu dominio sobre el Mejoramiento Animal", min_value=0, max_value=5, value=10)
+
+col1, col2 = st.columns(2)
+
+with col1:
+   
 multi = '''Estos son los temas que se ven el curso:  
 * Dinámica de poblaciones  
 * Factores de corrección  
@@ -18,11 +29,8 @@ multi = '''Estos son los temas que se ven el curso:
 
 st.write(multi)
 
+with col2:
+    
 st.image("https://cdn.slidesharecdn.com/ss_thumbnails/mejoramientogeneticoanimal-240418190359-8edceafb-thumbnail.jpg?width=560&fit=bounds")
 
-nombre = st.text_input("¿Cuál es tu nombre?")
-if nombre:
-    st.write(f"Hola, {nombre} 👋, bienvenido al curso de Mejoramiento Animal")
 
-# Widget: slider
-numero = st.slider("Indica cuál es tu dominio sobre el Mejoramiento Animal", min_value=0, max_value=5, value=10)
