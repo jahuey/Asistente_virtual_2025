@@ -12,11 +12,12 @@ nivel = st.slider("Indica cuál es tu dominio sobre el Mejoramiento Animal (0 = 
 
 st.image("https://cdn.slidesharecdn.com/ss_thumbnails/mejoramientogeneticoanimal-240418190359-8edceafb-thumbnail.jpg?width=560&fit=bounds")
 
-# Diccionario de razonados (puedes ir llenando por tema)
+# Razonados con guía paso a paso (ejemplo)
 temas_razonados = {
     "Dinámica de poblaciones": [
-        """**Problema resuelto: Estructura por edad y selección de vaquillonas**
-
+        {
+            "titulo": "Estructura por edad y selección de vaquillonas",
+            "problema": """
 Se tienen dos rodeos de cría Hereford (A y B) con diferente estructura en edades al parto. Los terneros machos se venden al destete, recriándose solamente las hembras. Los toros se compran.
 
 | Edad al parto | Rodeo A | Rodeo B |
@@ -29,57 +30,66 @@ Se tienen dos rodeos de cría Hereford (A y B) con diferente estructura en edade
 | Total vacas   | 100     | 99      |
 | Edad x n      | 500     | 396     |
 
-**IG rodeo A = 500 / 100 = 5 años (viejo)**  
-**IG rodeo B = 396 / 99 = 4 años (joven)**
+Se definen los intervalos generacionales (IG) como:
 
-Se definen como intervalos generacionales.
+IG rodeo A = 500 / 100 = 5 años (viejo)  
+IG rodeo B = 396 / 99 = 4 años (joven)
 
-**Con 66% de parición (33 hembras por rodeo):**  
+Con 66% de parición (33 hembras por rodeo):  
 - Vaquillonas necesarias:
-  - A = 20 → **60.6 %**
-  - B = 33 → **100 %**
+  - A = 20 → 60.6 %
+  - B = 33 → 100 %
 
-**Con 86% de parición (43 hembras por rodeo):**  
-- A = 20 → **46.5 %**
-- B = 33 → **76.7 %**
+Con 86% de parición (43 hembras por rodeo):  
+- A = 20 → 46.5 %
+- B = 33 → 76.7 %
 
-**Conclusión:**  
 En el rodeo A con 86% de parición se logra seleccionar las vaquillonas con mayor peso promedio, porque se reduce el % de selección debido a:  
 1. Mayor número de animales disponibles.  
 2. Menor número de animales a reponer.
-"""
+""",
+            "preguntas": [
+                {
+                    "texto": "¿Cómo calculas el intervalo generacional (IG) para cada rodeo y qué significa?",
+                    "pista": "Recuerda que IG = suma (edad al parto x número de vacas) / total vacas."
+                },
+                {
+                    "texto": "¿Qué implica un IG más alto o más bajo en el contexto del mejoramiento genético?",
+                    "pista": "Piensa en cómo afecta la edad promedio al ciclo reproductivo y la rapidez de cambio genético."
+                },
+                {
+                    "texto": "¿Cómo influye el porcentaje de parición en la selección de vaquillonas necesarias?",
+                    "pista": "Considera la relación entre número de hembras paridas y la cantidad que debes seleccionar para reponer."
+                },
+                {
+                    "texto": "¿Por qué el rodeo A con 86% de parición puede lograr una mejor selección a pesar de tener un IG más alto?",
+                    "pista": "Observa cómo el porcentaje de selección cambia y cómo esto afecta la calidad genética."
+                }
+            ]
+        }
     ],
-    "Factores de corrección": [],
-    "Consanguinidad y parentesco genético": [],
-    "Heredabilidad y repetibilidad": [],
-    "Metodologías actuales para la predicción de los valores de cría": [],
-    "Métodos de selección": [],
-    "Progreso genético": [],
-    "Correlaciones y respuesta correlacionada": [],
-    "Selección por más de una característica": [],
-    "Depresión endogámica": [],
-    "Cruzamientos": []
+    # Puedes agregar más temas y razonados aquí
 }
 
-st.subheader("📘 Haz clic en un tema para ver sus razonados:")
+st.subheader("📘 Selecciona un tema para ver sus razonados:")
 
-# Lista de temas
-temas = list(temas_razonados.keys())
+tema = st.selectbox("Tema", list(temas_razonados.keys()))
 
-# Mostrar los botones en 2 filas y 6 columnas
-cols = st.columns(6)  # 6 botones por fila
-
-# Mostrar los botones divididos en columnas
-for i, tema in enumerate(temas):
-    col = cols[i % 6]
-    if col.button(tema, use_container_width=True):
-        st.markdown(f"### 🧠 Razonados de: {tema}")
-        razonados = temas_razonados[tema]
-        if razonados:
-            for j, r in enumerate(razonados, 1):
-                st.markdown(f"**{j}.** {r}")
-        else:
-            st.info("Aún no hay razonados cargados para este tema.")
+if tema:
+    razonados = temas_razonados[tema]
+    if razonados:
+        razonado = razonados[0]  # Tomamos el primer razonado para mostrar
+        st.markdown(f"### Problema: {razonado['titulo']}")
+        st.markdown(razonado['problema'])
         st.markdown("---")
 
+        # Iterar preguntas para guiar al estudiante
+        for i, pregunta in enumerate(razonado["preguntas"], 1):
+            st.markdown(f"**Pregunta {i}:** {pregunta['texto']}")
+            respuesta = st.text_area(f"Escribe tu respuesta para la pregunta {i}:", key=f"resp{i}")
 
+            if respuesta.strip():
+                st.info(f"Pista para esta pregunta: {pregunta['pista']}")
+                st.markdown("---")
+    else:
+        st.info("Aún no hay razonados cargados para este tema.")
