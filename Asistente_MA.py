@@ -12,13 +12,9 @@ nivel = st.slider("Indica cuál es tu dominio sobre el Mejoramiento Animal (0 = 
 
 st.image("https://cdn.slidesharecdn.com/ss_thumbnails/mejoramientogeneticoanimal-240418190359-8edceafb-thumbnail.jpg?width=560&fit=bounds")
 
-# Diccionario vacío o con ejemplo para que tú lo llenes
+# Diccionario de razonados (puedes ir llenando por tema)
 temas_razonados = {
-    "Dinámica de poblaciones": [
-        # Aquí vas a pegar tus razonados, por ejemplo:
-        # "Explica el efecto del tamaño efectivo de la población sobre la variabilidad genética.",
-        # "¿Qué es la deriva genética y cómo se manifiesta en poblaciones pequeñas?"
-    ],
+    "Dinámica de poblaciones": [],
     "Factores de corrección": [],
     "Consanguinidad y parentesco genético": [],
     "Heredabilidad y repetibilidad": [],
@@ -31,14 +27,25 @@ temas_razonados = {
     "Cruzamientos": []
 }
 
-st.subheader("📘 Temas del curso y razonados disponibles")
+st.subheader("📘 Haz clic en un tema para ver sus razonados:")
 
-for tema in temas_razonados:
-    with st.expander(f"🔹 {tema}"):
+# Lista de temas
+temas = list(temas_razonados.keys())
+
+# Mostrar los botones en 2 filas y 6 columnas
+cols = st.columns(6)  # 6 botones por fila
+
+# Mostrar los botones divididos en columnas
+for i, tema in enumerate(temas):
+    col = cols[i % 6]
+    if col.button(tema, use_container_width=True):
+        st.markdown(f"### 🧠 Razonados de: {tema}")
         razonados = temas_razonados[tema]
         if razonados:
-            for i, razonado in enumerate(razonados, 1):
-                st.markdown(f"**{i}.** {razonado}")
+            for j, r in enumerate(razonados, 1):
+                st.markdown(f"**{j}.** {r}")
         else:
-            st.info("Aún no se han cargado razonados para este tema. Puedes agregarlos desde el código.")
+            st.info("Aún no hay razonados cargados para este tema.")
+        st.markdown("---")
+
 
