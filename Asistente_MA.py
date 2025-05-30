@@ -44,7 +44,9 @@ st.image("https://cdn.slidesharecdn.com/ss_thumbnails/mejoramientogeneticoanimal
 # Razonados por tema
 temas_razonados = {
     "Dinámica de poblaciones": [
-        """**Razonado 1: Estructura por edad y selección de vaquillonas**
+        {
+            "enunciado": """
+**Razonado 1: Estructura por edad y selección de vaquillonas**
 
 Se tienen dos rodeos de cría Hereford (A y B) con diferente estructura en edades al parto. Los terneros machos se venden al destete, recriándose solamente las hembras. Los toros se compran.
 
@@ -57,14 +59,42 @@ Se tienen dos rodeos de cría Hereford (A y B) con diferente estructura en edade
 | 7             | 20      |         |
 | Total vacas   | 100     | 99      |
 | Edad x n      | 500     | 396     |
-
-**Incisos:**
-- ¿Cuál es el intervalo generacional de cada rodeo?
-- ¿Cuántas vaquillonas se necesitan reponer si la parición es del 66%? ¿Y si es del 86%?
-- ¿Cuál rodeo permite una mayor intensidad de selección? ¿Por qué?
-"""
-    ] + ["**Razonado pendiente de carga**" for _ in range(9)],
+""",
+            "incisos": [
+                "¿Cuál es el intervalo generacional de cada rodeo?",
+                "¿Cuántas vaquillonas se necesitan reponer si la parición es del 66%? ¿Y si es del 86%?",
+                "¿Cuál rodeo permite una mayor intensidad de selección? ¿Por qué?"
+            ]
+        }
+    ] + [{"enunciado": "**Razonado pendiente**", "incisos": []} for _ in range(9)]
 }
+
+# Mostrar el razonado paso a paso
+if st.session_state.razonado_seleccionado is not None:
+    idx = st.session_state.razonado_seleccionado
+    razonados = temas_razonados.get(st.session_state.tema_seleccionado, [])
+    if idx < len(razonados):
+        razonado = razonados[idx]
+        st.markdown("### 📄 Enunciado del razonado:")
+        st.markdown(razonado["enunciado"])
+
+        if razonado["incisos"]:
+            st.markdown("### 🧩 Incisos disponibles:")
+            for i, inciso in enumerate(razonado["incisos"]):
+                if st.button(f"Resolver inciso {chr(97+i)})", key=f"inciso_{i}"):
+                    st.session_state.inciso_activo = i
+
+        if "inciso_activo" in st.session_state:
+            i = st.session_state.inciso_activo
+            st.markdown(f"### 🔍 Inciso {chr(97+i)})")
+            st.markdown(razonado["incisos"][i])
+
+            st.markdown("**¿Cómo crees que puedes abordarlo?** 💡")
+            idea = st.text_input("Escribe tu idea o procedimiento aquí:", key=f"idea_{i}")
+            if idea:
+                st.markdown("✅ ¡Buena iniciativa! Revisa si tu planteamiento considera el concepto clave.")
+                st.markdown("🔎 ¿Qué dato del enunciado usarías primero?")
+
 
 st.subheader("📘 Haz clic en un tema para ver sus razonados:")
 
