@@ -14,7 +14,41 @@ st.image("https://cdn.slidesharecdn.com/ss_thumbnails/mejoramientogeneticoanimal
 
 # Diccionario de razonados (puedes ir llenando por tema)
 temas_razonados = {
-    "Dinámica de poblaciones": [],
+    "Dinámica de poblaciones": [
+        """**Problema resuelto: Estructura por edad y selección de vaquillonas**
+
+Se tienen dos rodeos de cría Hereford (A y B) con diferente estructura en edades al parto. Los terneros machos se venden al destete, recriándose solamente las hembras. Los toros se compran.
+
+| Edad al parto | Rodeo A | Rodeo B |
+|---------------|---------|---------|
+| 3             | 20      | 33      |
+| 4             | 20      | 33      |
+| 5             | 20      | 33      |
+| 6             | 20      |         |
+| 7             | 20      |         |
+| Total vacas   | 100     | 99      |
+| Edad x n      | 500     | 396     |
+
+**IG rodeo A = 500 / 100 = 5 años (viejo)**  
+**IG rodeo B = 396 / 99 = 4 años (joven)**
+
+Se definen como intervalos generacionales.
+
+**Con 66% de parición (33 hembras por rodeo):**  
+- Vaquillonas necesarias:
+  - A = 20 → **60.6 %**
+  - B = 33 → **100 %**
+
+**Con 86% de parición (43 hembras por rodeo):**  
+- A = 20 → **46.5 %**
+- B = 33 → **76.7 %**
+
+**Conclusión:**  
+En el rodeo A con 86% de parición se logra seleccionar las vaquillonas con mayor peso promedio, porque se reduce el % de selección debido a:  
+1. Mayor número de animales disponibles.  
+2. Menor número de animales a reponer.
+"""
+    ],
     "Factores de corrección": [],
     "Consanguinidad y parentesco genético": [],
     "Heredabilidad y repetibilidad": [],
