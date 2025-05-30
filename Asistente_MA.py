@@ -39,7 +39,7 @@ if nombre:
 
 nivel = st.slider("Indica tu nivel de dominio (0=nada, 5=experto)", 0, 5, 2)
 
-st.image("https://cdn.slidesharecdn.com/ss_thumbnails/mejoramientogeneticoanimal-240418190359-8edceafb-thumbnail.jpg?width=560&fit=bounds")
+st.sidebar.image("https://cdn.slidesharecdn.com/ss_thumbnails/mejoramientogeneticoanimal-240418190359-8edceafb-thumbnail.jpg?width=560&fit=bounds")
 
 # Razonados por tema
 temas_razonados = {
