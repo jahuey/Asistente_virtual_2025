@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.set_page_config(page_title="Asistente de Mejoramiento Genético", layout="wide")
+st.set_page_config(page_title="Asistente de Mejoramiento Genético", layout="centered")
 
 st.title(":blue[Asistente virtual para el curso de Mejoramiento Animal] 🐎 🐂 🐷 🐐 🐑 🐔")
 
@@ -10,7 +10,9 @@ if nombre:
 
 nivel = st.slider("Indica cuál es tu dominio sobre el Mejoramiento Animal (0 = nada, 5 = experto)", 0, 5, 2)
 
-# Diccionario de razonados por tema (aún vacíos)
+st.image("https://cdn.slidesharecdn.com/ss_thumbnails/mejoramientogeneticoanimal-240418190359-8edceafb-thumbnail.jpg?width=560&fit=bounds")
+
+# Diccionario de razonados (puedes ir llenando por tema)
 temas_razonados = {
     "Dinámica de poblaciones": [],
     "Factores de corrección": [],
@@ -25,22 +27,25 @@ temas_razonados = {
     "Cruzamientos": []
 }
 
-# Divide la pantalla en 2 columnas: izquierda (más ancha) y derecha
-col1, col2 = st.columns([1, 1])
+st.subheader("📘 Haz clic en un tema para ver sus razonados:")
 
-with col1:
-    st.subheader("📘 Selecciona un tema:")
-    for tema in temas_razonados:
-        if st.button(tema, use_container_width=True):
-            st.markdown(f"### 🧠 Razonados de: {tema}")
-            razonados = temas_razonados[tema]
-            if razonados:
-                for i, r in enumerate(razonados, 1):
-                    st.markdown(f"**{i}.** {r}")
-            else:
-                st.info("Aún no hay razonados cargados para este tema.")
-            st.markdown("---")
+# Lista de temas
+temas = list(temas_razonados.keys())
 
-with col2:
-    st.image("https://cdn.slidesharecdn.com/ss_thumbnails/mejoramientogeneticoanimal-240418190359-8edceafb-thumbnail.jpg?width=560&fit=bounds")
+# Mostrar los botones en 2 filas y 6 columnas
+cols = st.columns(6)  # 6 botones por fila
+
+# Mostrar los botones divididos en columnas
+for i, tema in enumerate(temas):
+    col = cols[i % 6]
+    if col.button(tema, use_container_width=True):
+        st.markdown(f"### 🧠 Razonados de: {tema}")
+        razonados = temas_razonados[tema]
+        if razonados:
+            for j, r in enumerate(razonados, 1):
+                st.markdown(f"**{j}.** {r}")
+        else:
+            st.info("Aún no hay razonados cargados para este tema.")
+        st.markdown("---")
+
 
