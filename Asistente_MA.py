@@ -1,24 +1,52 @@
 import streamlit as st
 from openai import OpenAI
+from collections import defaultdict
+import matplotlib.pyplot as plt
 
+# Configuración inicial
 st.set_page_config(page_title="Asistente de Mejoramiento Genético", layout="centered")
-
 st.title(":blue[Asistente virtual para el curso de Mejoramiento Animal] 🐎 🐂 🐷 🐐 🐑 🐔")
 
+# Estado de sesión para uso
+if "usuario_nombre" not in st.session_state:
+    st.session_state.usuario_nombre = None
+if "tema_seleccionado" not in st.session_state:
+    st.session_state.tema_seleccionado = None
+if "razonado_seleccionado" not in st.session_state:
+    st.session_state.razonado_seleccionado = None
+
+# Simulación de base de datos en memoria
+uso_por_mes = defaultdict(int)
+uso_por_tema = defaultdict(int)
+razonados_con_dificultad = defaultdict(int)
+
+# Función de registro de uso
+def registrar_uso(usuario, tema=None, razonado=None):
+    from datetime import datetime
+    mes = datetime.now().strftime("%Y-%m")
+    uso_por_mes[mes] += 1
+    if tema:
+        uso_por_tema[tema] += 1
+    if razonado is not None:
+        clave = f"{tema} - Razonado {razonado+1}"
+        razonados_con_dificultad[clave] += 1
+
+# Entrada del usuario
 nombre = st.text_input("¿Cuál es tu nombre?")
 if nombre:
+    st.session_state.usuario_nombre = nombre
     st.success(f"Hola, {nombre} 👋, bienvenido al curso de Mejoramiento Animal")
 
-nivel = st.slider("Indica cuál es tu dominio sobre el Mejoramiento Animal (0 = nada, 5 = experto)", 0, 5, 2)
+nivel = st.slider("Indica tu nivel de dominio (0=nada, 5=experto)", 0, 5, 2)
 
 st.image("https://cdn.slidesharecdn.com/ss_thumbnails/mejoramientogeneticoanimal-240418190359-8edceafb-thumbnail.jpg?width=560&fit=bounds")
 
-# Diccionario de razonados por tema (para ejemplo agrego 2 razonados al tema "Dinámica de poblaciones")
+# Razonados por tema
 temas_razonados = {
     "Dinámica de poblaciones": [
-        """**Razonado 1:**  
-Se tienen dos rodeos de cría Hereford (A y B) con diferente estructura en edades al parto.  
-Tabla de datos:
+        """**Razonado 1: Estructura por edad y selección de vaquillonas**
+
+Se tienen dos rodeos de cría Hereford (A y B) con diferente estructura en edades al parto. Los terneros machos se venden al destete, recriándose solamente las hembras. Los toros se compran.
 
 | Edad al parto | Rodeo A | Rodeo B |
 |---------------|---------|---------|
@@ -30,113 +58,77 @@ Tabla de datos:
 | Total vacas   | 100     | 99      |
 | Edad x n      | 500     | 396     |
 
-Incisos:  
-- Calcular intervalo generacional (IG) para ambos rodeos.  
-- Interpretar diferencias en IG.  
-- Evaluar efectos del porcentaje de parición en la selección de vaquillonas.""",
-
-        """**Razonado 2:**  
-Un rodeo presenta una heritabilidad estimada para peso al destete de 0.25. Se dispone de datos de 200 terneros con sus respectivos pesos y registros de sus padres.
-
-Incisos:  
-- ¿Cómo influye la heritabilidad en la respuesta a la selección?  
-- Diseñar un esquema básico para mejorar peso al destete usando selección directa.""",
-        # Puedes agregar hasta 10 razonados por tema...
-    ],
-    "Factores de corrección": [
-        """**Razonado 1:**  
-Se requiere corregir el peso de animales por efecto de edad y sexo para compararlos homogéneamente.
-
-Incisos:  
-- Explicar la importancia de factores de corrección.  
-- Proponer un modelo simple de corrección para el peso."""
-    ],
-    # Otros temas con listas vacías o con razonados...
-    "Consanguinidad y parentesco genético": [],
-    "Heredabilidad y repetibilidad": [],
-    "Metodologías actuales para la predicción de los valores de cría": [],
-    "Métodos de selección": [],
-    "Progreso genético": [],
-    "Correlaciones y respuesta correlacionada": [],
-    "Selección por más de una característica": [],
-    "Depresión endogámica": [],
-    "Cruzamientos": []
+**Incisos:**
+- ¿Cuál es el intervalo generacional de cada rodeo?
+- ¿Cuántas vaquillonas se necesitan reponer si la parición es del 66%? ¿Y si es del 86%?
+- ¿Cuál rodeo permite una mayor intensidad de selección? ¿Por qué?
+"""
+    ] + ["**Razonado pendiente de carga**" for _ in range(9)],
 }
 
 st.subheader("📘 Haz clic en un tema para ver sus razonados:")
 
-# Lista de temas
+# Botones de temas
 temas = list(temas_razonados.keys())
-
-# Mostrar los botones de temas en 2 filas y 6 columnas
 cols = st.columns(6)
-tema_seleccionado = None
+
 for i, tema in enumerate(temas):
     col = cols[i % 6]
     if col.button(tema, key=f"tema_{i}"):
-        tema_seleccionado = tema
+        st.session_state.tema_seleccionado = tema
+        st.session_state.razonado_seleccionado = None
+        registrar_uso(st.session_state.usuario_nombre, tema=tema)
 
-# Guardamos la selección en session_state para persistir entre runs
-if "tema_seleccionado" not in st.session_state:
-    st.session_state.tema_seleccionado = None
-
-if tema_seleccionado:
-    st.session_state.tema_seleccionado = tema_seleccionado
-
+# Si se seleccionó un tema, mostrar botones de razonados
 if st.session_state.tema_seleccionado:
-    st.markdown(f"### 🧠 Razonados de: {st.session_state.tema_seleccionado}")
+    tema = st.session_state.tema_seleccionado
+    st.markdown(f"### 🧠 Tema seleccionado: {tema}")
+    st.markdown("Selecciona un razonado:")
 
-    razonados = temas_razonados[st.session_state.tema_seleccionado]
+    cols_raz = st.columns(5)
+    for i in range(10):
+        if cols_raz[i % 5].button(f"Razonado {i+1}", key=f"raz_{i}"):
+            st.session_state.razonado_seleccionado = i
+            registrar_uso(
+                st.session_state.usuario_nombre,
+                tema=tema,
+                razonado=i
+            )
 
-    if razonados:
-        # Mostrar hasta 10 botones de razonados
-        max_razonados = min(10, len(razonados))
-        razonado_seleccionado = None
-
-        cols_raz = st.columns(max_razonados)
-        for i in range(max_razonados):
-            if cols_raz[i].button(f"Razonado {i+1}", key=f"raz_{i}"):
-                razonado_seleccionado = i
-
-        # Guardar selección en session_state para persistencia
-        if "razonado_seleccionado" not in st.session_state:
-            st.session_state.razonado_seleccionado = None
-
-        if razonado_seleccionado is not None:
-            st.session_state.razonado_seleccionado = razonado_seleccionado
-
-        # Mostrar el razonado seleccionado (solo texto)
-        if st.session_state.razonado_seleccionado is not None:
-            st.markdown("---")
-            st.markdown(razonados[st.session_state.razonado_seleccionado])
+# Mostrar el razonado (sin respuestas)
+if st.session_state.razonado_seleccionado is not None:
+    idx = st.session_state.razonado_seleccionado
+    razonados = temas_razonados.get(st.session_state.tema_seleccionado, [])
+    if idx < len(razonados):
+        razonado_completo = razonados[idx]
+        razonado_sin_conclusion = razonado_completo.split("**Conclusión:**")[0]
+        st.markdown("### 📄 Enunciado del razonado:")
+        st.markdown(razonado_sin_conclusion)
     else:
-        st.info("Aún no hay razonados cargados para este tema.")
+        st.warning("Este razonado aún no ha sido cargado.")
 
+# Gráficos
+st.subheader("📊 Estadísticas de uso de la app")
 
-openai_api_key = st.secrets["api_key"] 
-# Create an OpenAI client.
-client = OpenAI(api_key=openai_api_key)
+if uso_por_mes:
+    st.markdown("**Usuarios por mes:**")
+    fig, ax = plt.subplots()
+    ax.bar(uso_por_mes.keys(), uso_por_mes.values(), color='skyblue')
+    plt.xticks(rotation=45)
+    st.pyplot(fig)
 
-prompt = st.chat_input("What is up?")
-if prompt==None:
-   st.stop()
+if uso_por_tema:
+    st.markdown("**Consultas por tema:**")
+    fig2, ax2 = plt.subplots()
+    ax2.bar(uso_por_tema.keys(), uso_por_tema.values(), color='lightgreen')
+    plt.xticks(rotation=45)
+    st.pyplot(fig2)
 
-with st.chat_message("user",avatar = "🦖"):
-   st.markdown(prompt)
-
-# Generate a response using the OpenAI API.
-
-stream = client.chat.completions.create(
-        model="gpt-4o-mini",  
-        messages=[
-            {"role": "system", "content": "You are an assistant."},
-            {"role": "user", "content": prompt}
-        ],
-        max_tokens=800,
-        temperature=0,
-    )
-respuesta = stream.choices[0].message.content
-
-with st.chat_message("assistant"):
-   st.write(respuesta)
-
+if razonados_con_dificultad:
+    st.markdown("**Razonados más consultados:**")
+    fig3, ax3 = plt.subplots()
+    claves = list(razonados_con_dificultad.keys())
+    valores = list(razonados_con_dificultad.values())
+    ax3.bar(claves, valores, color='salmon')
+    plt.xticks(rotation=90)
+    st.pyplot(fig3)
