@@ -9,10 +9,6 @@ if nombre:
 # Widget: slider
 numero = st.slider("Indica cuál es tu dominio sobre el Mejoramiento Animal", min_value=0, max_value=5, value=10)
 
-col1, col2 = st.columns(2)
-
-with col1:
-   
 multi = '''Estos son los temas que se ven el curso:  
 * Dinámica de poblaciones  
 * Factores de corrección  
@@ -27,6 +23,10 @@ multi = '''Estos son los temas que se ven el curso:
 * Cruzamientos
 '''
 
+col1, col2 = st.columns(2)
+
+with col1:
+   
 st.write(multi)
 
 with col2:
