@@ -22,14 +22,6 @@ multi = '''Estos son los temas que se ven el curso:
 * Depresión endogámica  
 * Cruzamientos
 '''
-
-col1, col2 = st.columns(2)
-
-with col1:
-   
-st.write(multi)
-
-with col2:
     
 st.image("https://cdn.slidesharecdn.com/ss_thumbnails/mejoramientogeneticoanimal-240418190359-8edceafb-thumbnail.jpg?width=560&fit=bounds")
 
