@@ -7,8 +7,13 @@ multi = '''Estos son los temas que se ven el curso:
 * Factores de corrección  
 * Consanguinidad y parentesco genético  
 * Heredabilidad y repetibilidad  
+* Metodologías actuales para la predicción de los valores de cría  
 * Métodos de selección  
 * Progreso genético  
+* Correlaciones y respuesta correlacionada  
+* Selección por más de una característica  
+* Depresión endogámica  
+* Cruzamientos
 '''
 
 st.write(multi)
