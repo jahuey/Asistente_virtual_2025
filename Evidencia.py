@@ -6,4 +6,7 @@ st.image("https://cdn.slidesharecdn.com/ss_thumbnails/mejoramientogeneticoanimal
 
 nombre = st.text_input("¿Cuál es tu nombre?")
 if nombre:
-    st.write(f"Hola, {nombre} 👋, bienvenido al curso de Mejoramiento Animal,")
+    st.write(f"Hola, {nombre} 👋, bienvenido al curso de Mejoramiento Animal")
+
+# Widget: slider
+numero = st.slider("Indica cual es tu dominio de la materia", min_value=0, max_value=10, value=50)
