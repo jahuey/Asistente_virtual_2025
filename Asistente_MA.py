@@ -13,7 +13,7 @@ nivel = st.slider("Indica cuál es tu dominio sobre el Mejoramiento Animal (0 = 
 
 st.image("https://cdn.slidesharecdn.com/ss_thumbnails/mejoramientogeneticoanimal-240418190359-8edceafb-thumbnail.jpg?width=560&fit=bounds")
 
-# Diccionario de razonados por tema (para ejemplo agrego 2 razonados al tema "Dinámica de poblaciones")
+# Diccionario de razonados por tema
 temas_razonados = {
     "Dinámica de poblaciones": [
         """**Razonado 1:**  
@@ -41,7 +41,6 @@ Un rodeo presenta una heritabilidad estimada para peso al destete de 0.25. Se di
 Incisos:  
 - ¿Cómo influye la heritabilidad en la respuesta a la selección?  
 - Diseñar un esquema básico para mejorar peso al destete usando selección directa.""",
-        # Puedes agregar hasta 10 razonados por tema...
     ],
     "Factores de corrección": [
         """**Razonado 1:**  
@@ -51,7 +50,6 @@ Incisos:
 - Explicar la importancia de factores de corrección.  
 - Proponer un modelo simple de corrección para el peso."""
     ],
-    # Otros temas con listas vacías o con razonados...
     "Consanguinidad y parentesco genético": [],
     "Heredabilidad y repetibilidad": [],
     "Metodologías actuales para la predicción de los valores de cría": [],
@@ -65,18 +63,16 @@ Incisos:
 
 st.subheader("📘 Haz clic en un tema para ver sus razonados:")
 
-# Lista de temas
 temas = list(temas_razonados.keys())
-
-# Mostrar los botones de temas en 2 filas y 6 columnas
 cols = st.columns(6)
 tema_seleccionado = None
+
 for i, tema in enumerate(temas):
     col = cols[i % 6]
     if col.button(tema, key=f"tema_{i}"):
         tema_seleccionado = tema
 
-# Guardamos la selección en session_state para persistir entre runs
+# Guardar selección en session_state
 if "tema_seleccionado" not in st.session_state:
     st.session_state.tema_seleccionado = None
 
@@ -89,54 +85,70 @@ if st.session_state.tema_seleccionado:
     razonados = temas_razonados[st.session_state.tema_seleccionado]
 
     if razonados:
-        # Mostrar hasta 10 botones de razonados
         max_razonados = min(10, len(razonados))
         razonado_seleccionado = None
-
         cols_raz = st.columns(max_razonados)
+
         for i in range(max_razonados):
             if cols_raz[i].button(f"Razonado {i+1}", key=f"raz_{i}"):
                 razonado_seleccionado = i
 
-        # Guardar selección en session_state para persistencia
         if "razonado_seleccionado" not in st.session_state:
             st.session_state.razonado_seleccionado = None
 
         if razonado_seleccionado is not None:
             st.session_state.razonado_seleccionado = razonado_seleccionado
 
-        # Mostrar el razonado seleccionado (solo texto)
         if st.session_state.razonado_seleccionado is not None:
             st.markdown("---")
             st.markdown(razonados[st.session_state.razonado_seleccionado])
     else:
         st.info("Aún no hay razonados cargados para este tema.")
 
-
-openai_api_key = st.secrets["api_key"] 
-# Create an OpenAI client.
+# -------------------------------
+# CHAT DEL ASISTENTE VIRTUAL
+# -------------------------------
+openai_api_key = st.secrets["api_key"]
 client = OpenAI(api_key=openai_api_key)
 
-prompt = st.chat_input("What is up?")
-if prompt==None:
-   st.stop()
+# Validar que se haya elegido un razonado antes de permitir el chat
+if st.session_state.tema_seleccionado is None or st.session_state.razonado_seleccionado is None:
+    st.warning("Selecciona primero un tema y un razonado para comenzar a interactuar con el asistente.")
+    st.stop()
 
-with st.chat_message("user",avatar = "🦖"):
-   st.markdown(prompt)
+prompt = st.chat_input("Haz tu pregunta o describe en qué parte del razonado necesitas ayuda:")
+if prompt is None:
+    st.stop()
 
-# Generate a response using the OpenAI API.
+with st.chat_message("user", avatar="🧑‍🎓"):
+    st.markdown(prompt)
 
+# Crear contexto basado en el razonado seleccionado
+contexto = f"""
+Eres un asistente virtual experto en mejoramiento animal.
+El estudiante ha seleccionado el tema: '{st.session_state.tema_seleccionado}' y está trabajando con el razonado número {st.session_state.razonado_seleccionado + 1}.
+A continuación se muestra el razonado:
+
+{temas_razonados[st.session_state.tema_seleccionado][st.session_state.razonado_seleccionado]}
+
+Tu tarea es guiar al estudiante paso a paso para que razone por sí mismo.
+NUNCA debes dar la respuesta final ni los resultados numéricos, solo orientar, sugerir cómo organizar la información, qué fórmulas considerar o qué conceptos revisar.
+Promueve el pensamiento crítico y la lógica del estudiante.
+"""
+
+# Generar respuesta
 stream = client.chat.completions.create(
-        model="gpt-4o-mini",  
-        messages=[
-            {"role": "system", "content": "You are an assistant."},
-            {"role": "user", "content": prompt}
-        ],
-        max_tokens=800,
-        temperature=0,
-    )
+    model="gpt-4o-mini",
+    messages=[
+        {"role": "system", "content": contexto},
+        {"role": "user", "content": prompt}
+    ],
+    max_tokens=800,
+    temperature=0.7,
+)
+
 respuesta = stream.choices[0].message.content
 
-with st.chat_message("assistant"):
-   st.write(respuesta)
+with st.chat_message("assistant", avatar="🧠"):
+    st.markdown(respuesta)
 
