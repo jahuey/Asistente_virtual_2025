@@ -12,12 +12,12 @@ nivel = st.slider("Indica cuál es tu dominio sobre el Mejoramiento Animal (0 = 
 
 st.image("https://cdn.slidesharecdn.com/ss_thumbnails/mejoramientogeneticoanimal-240418190359-8edceafb-thumbnail.jpg?width=560&fit=bounds")
 
-# Diccionario de razonados (puedes ir llenando por tema)
+# Diccionario de razonados por tema (para ejemplo agrego 2 razonados al tema "Dinámica de poblaciones")
 temas_razonados = {
     "Dinámica de poblaciones": [
-        """**Problema resuelto: Estructura por edad y selección de vaquillonas**
-
-Se tienen dos rodeos de cría Hereford (A y B) con diferente estructura en edades al parto. Los terneros machos se venden al destete, recriándose solamente las hembras. Los toros se compran.
+        """**Razonado 1:**  
+Se tienen dos rodeos de cría Hereford (A y B) con diferente estructura en edades al parto.  
+Tabla de datos:
 
 | Edad al parto | Rodeo A | Rodeo B |
 |---------------|---------|---------|
@@ -29,27 +29,28 @@ Se tienen dos rodeos de cría Hereford (A y B) con diferente estructura en edade
 | Total vacas   | 100     | 99      |
 | Edad x n      | 500     | 396     |
 
-**IG rodeo A = 500 / 100 = 5 años (viejo)**  
-**IG rodeo B = 396 / 99 = 4 años (joven)**
+Incisos:  
+- Calcular intervalo generacional (IG) para ambos rodeos.  
+- Interpretar diferencias en IG.  
+- Evaluar efectos del porcentaje de parición en la selección de vaquillonas.""",
 
-Se definen como intervalos generacionales.
+        """**Razonado 2:**  
+Un rodeo presenta una heritabilidad estimada para peso al destete de 0.25. Se dispone de datos de 200 terneros con sus respectivos pesos y registros de sus padres.
 
-**Con 66% de parición (33 hembras por rodeo):**  
-- Vaquillonas necesarias:
-  - A = 20 → **60.6 %**
-  - B = 33 → **100 %**
-
-**Con 86% de parición (43 hembras por rodeo):**  
-- A = 20 → **46.5 %**
-- B = 33 → **76.7 %**
-
-**Conclusión:**  
-En el rodeo A con 86% de parición se logra seleccionar las vaquillonas con mayor peso promedio, porque se reduce el % de selección debido a:  
-1. Mayor número de animales disponibles.  
-2. Menor número de animales a reponer.
-"""
+Incisos:  
+- ¿Cómo influye la heritabilidad en la respuesta a la selección?  
+- Diseñar un esquema básico para mejorar peso al destete usando selección directa.""",
+        # Puedes agregar hasta 10 razonados por tema...
     ],
-    "Factores de corrección": [],
+    "Factores de corrección": [
+        """**Razonado 1:**  
+Se requiere corregir el peso de animales por efecto de edad y sexo para compararlos homogéneamente.
+
+Incisos:  
+- Explicar la importancia de factores de corrección.  
+- Proponer un modelo simple de corrección para el peso."""
+    ],
+    # Otros temas con listas vacías o con razonados...
     "Consanguinidad y parentesco genético": [],
     "Heredabilidad y repetibilidad": [],
     "Metodologías actuales para la predicción de los valores de cría": [],
@@ -66,18 +67,47 @@ st.subheader("📘 Haz clic en un tema para ver sus razonados:")
 # Lista de temas
 temas = list(temas_razonados.keys())
 
-# Mostrar los botones en 2 filas y 6 columnas
-cols = st.columns(6)  # 6 botones por fila
-
-# Mostrar los botones divididos en columnas
+# Mostrar los botones de temas en 2 filas y 6 columnas
+cols = st.columns(6)
+tema_seleccionado = None
 for i, tema in enumerate(temas):
     col = cols[i % 6]
-    if col.button(tema, use_container_width=True):
-        st.markdown(f"### 🧠 Razonados de: {tema}")
-        razonados = temas_razonados[tema]
-        if razonados:
-            for j, r in enumerate(razonados, 1):
-                st.markdown(f"**{j}.** {r}")
-        else:
-            st.info("Aún no hay razonados cargados para este tema.")
-        st.markdown("---")
+    if col.button(tema, key=f"tema_{i}"):
+        tema_seleccionado = tema
+
+# Guardamos la selección en session_state para persistir entre runs
+if "tema_seleccionado" not in st.session_state:
+    st.session_state.tema_seleccionado = None
+
+if tema_seleccionado:
+    st.session_state.tema_seleccionado = tema_seleccionado
+
+if st.session_state.tema_seleccionado:
+    st.markdown(f"### 🧠 Razonados de: {st.session_state.tema_seleccionado}")
+
+    razonados = temas_razonados[st.session_state.tema_seleccionado]
+
+    if razonados:
+        # Mostrar hasta 10 botones de razonados
+        max_razonados = min(10, len(razonados))
+        razonado_seleccionado = None
+
+        cols_raz = st.columns(max_razonados)
+        for i in range(max_razonados):
+            if cols_raz[i].button(f"Razonado {i+1}", key=f"raz_{i}"):
+                razonado_seleccionado = i
+
+        # Guardar selección en session_state para persistencia
+        if "razonado_seleccionado" not in st.session_state:
+            st.session_state.razonado_seleccionado = None
+
+        if razonado_seleccionado is not None:
+            st.session_state.razonado_seleccionado = razonado_seleccionado
+
+        # Mostrar el razonado seleccionado (solo texto)
+        if st.session_state.razonado_seleccionado is not None:
+            st.markdown("---")
+            st.markdown(razonados[st.session_state.razonado_seleccionado])
+    else:
+        st.info("Aún no hay razonados cargados para este tema.")
+
