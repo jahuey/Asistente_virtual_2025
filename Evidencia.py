@@ -9,6 +9,8 @@ if nombre:
 # Widget: slider
 numero = st.slider("Indica cuál es tu dominio sobre el Mejoramiento Animal", min_value=0, max_value=5, value=10)
 
+st.image("https://cdn.slidesharecdn.com/ss_thumbnails/mejoramientogeneticoanimal-240418190359-8edceafb-thumbnail.jpg?width=560&fit=bounds")
+
 multi = '''Estos son los temas que se ven el curso:  
 * Dinámica de poblaciones  
 * Factores de corrección  
@@ -22,7 +24,7 @@ multi = '''Estos son los temas que se ven el curso:
 * Depresión endogámica  
 * Cruzamientos
 '''
-    
-st.image("https://cdn.slidesharecdn.com/ss_thumbnails/mejoramientogeneticoanimal-240418190359-8edceafb-thumbnail.jpg?width=560&fit=bounds")
+
+st.write(multi)
 
 
