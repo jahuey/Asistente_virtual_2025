@@ -9,8 +9,8 @@ Consanguinidad y parentesco genético
 Heredabilidad y repetibilidad
 Métodos de selección
 Progreso genético
-
 '''
+
 st.markdown(multi)
 
 st.image("https://cdn.slidesharecdn.com/ss_thumbnails/mejoramientogeneticoanimal-240418190359-8edceafb-thumbnail.jpg?width=560&fit=bounds")
