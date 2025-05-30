@@ -3,7 +3,7 @@ import streamlit as st
 st.title(":blue[Asistente virtual para el curso de Mejoramiento Animal] 🐎 🐂 🐷 🐐 🐑 🐔")
 
 multi = '''Estos son los temas que se ven el curso:  
-Dinámica de poblaciones  
+* Dinámica de poblaciones  
 Factores de corrección  
 Consanguinidad y parentesco genético  
 Heredabilidad y repetibilidad  
